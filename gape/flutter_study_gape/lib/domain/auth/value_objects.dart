@@ -1,9 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_study_gape/domain/core/failures.dart';
 import 'package:flutter_study_gape/domain/core/value_objects.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-
-part 'email_address.freezed.dart';
+import 'package:flutter_study_gape/domain/core/value_validators.dart';
 
 class EmailAddress extends ValueObject<String> {
   final Either<ValueFailure<String>, String> value;
@@ -17,7 +15,7 @@ class EmailAddress extends ValueObject<String> {
 
   //03 이후 나올 유니온을 사용하면 유용하다는 언급
   factory EmailAddress(String input) {
-    assert(input != null);
+    
     //예외/에러 사항 제어하기
     //assert는 개발 모드의 debug중일 때에만 영향을 미치며,
     //배포(production) 코드에서는 프로그램에 영향을 주지 않는다.
@@ -46,61 +44,11 @@ class EmailAddress extends ValueObject<String> {
   // //operator 생성
 }
 
-Either<ValueFailure<String>, String> validateEmailAddress(String input) {
-  const emailRegex =
-      r"""^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+""";
-  if (RegExp(emailRegex).hasMatch(input)) {
-    return right(input);
-    //RegExp은 정규식이랑 다르면 예외를 발생시키는거고
-    //hasMatch는 받은 문자열이 정규식과 같은지 비교하는 함수
-  } else {
-    //보통 null을 사용?
-    return left(ValueFailure.invalidEmail(failedValue: input));
-    //여기서 사용
+class Password extends ValueObject<String> {
+  final Either<ValueFailure<String>, String> value;
+  factory Password(String input) {
+
+    return Password._(validatePassword(input));
   }
-}
-
-@freezed
-abstract class ValueFailure<T> with _$ValueFailure<T> {
-  const factory ValueFailure.invalidEmail({
-    required String failedValue,
-  }) = InvalidEmail<T>;
-  const factory ValueFailure.shortPassword({
-    required String failedValue,
-  }) = ShortPassword<T>;
-}
-
-// class InvalidEmailFailure {
-//   final String failedValue;
-
-//   InvalidEmailFailure({@required this.failedValue});
-//   //잘못된 이메일 형식 발생시 사용되는 함수
-// }
-
-// // void f() {
-// //   try {
-// //     EmailAddress("dasdflkm");
-// //   } on InvalidEmailException catch (e) {
-// //     // asdf?
-// //   } on ExceedLenghtException catch (e) {
-// //     //asdfasdf
-// //   }
-// // }
-// // 위의 예외 사항 말고도 여러 경우, (너무 긴 문자열,특수문자포함된 아이디)등의
-// // 사항도 추가할 수 있다. 하지만 모든 예외를 찾아서 적는것이 베스트는 아님
-// void insideTheUI(EmailAddress emailAddress) {
-//   if (emailAddress.failure == null) {
-//     emailAddress.value;
-//   } else {
-//     //Error Snackbar
-//   }
-// }
-
-void showingTheEmailAddressOrFailure() {
-  final emailAddress = EmailAddress("asldfj");
-
-  String emailText = emailAddress.value
-      .fold((l) => "Failure happend, more precisely: $left", (r) => r);
-  String emailText2 =
-      emailAddress.value.getOrElse(() => "some failure happend");
+  const Password._(this.value);
 }

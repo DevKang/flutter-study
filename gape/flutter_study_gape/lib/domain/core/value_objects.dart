@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_study_gape/domain/auth/email_address.dart';
+import 'package:flutter_study_gape/domain/core/failures.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 @immutable
