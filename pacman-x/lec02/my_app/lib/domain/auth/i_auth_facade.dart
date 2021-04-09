@@ -1,22 +1,26 @@
+import 'package:dartz/dartz.dart';
+import 'package:my_app/domain/auth/auth_failure.dart';
+
 import 'value_object.dart';
 
-/*1.1
-  Facade Design Pattern에 의해서 아래와 같은 absract class를 만든다.
-   client는 abstract class를 통해 complicated한 EmailAddress, Password class의
-   내용에 접근하게 된다.
+/*3.1 failure을 다루기 위해서
+Either을 반환 타입으로 하고
+왼쪽은 AuthFailure 타입을 반환하고,
+오른쪽은 Unit를 반환한다.
+dart에서는 void 타입이 존재하지 않으므로(이는 단순한 keyword일뿐),
+이를 대체할 수 있는 
+unit을 사용한다.
+(unit allows you to represent a single return value that doesn't store any information)
+
 */
 abstract class IAuthFacade {
-  Future<void> registerWithEmailAndPassword({
+  Future<Either<AuthFailure, Unit>> registerWithEmailAndPassword({
     required EmailAddress emailAddress,
     required Password password
   });
-  Future<void> signInWithEmailAndPassword({
+  Future<Either<AuthFailure, Unit>> signInWithEmailAndPassword({
     required EmailAddress emailAddress,
     required Password password
   });
-  Future<void> signInWithGoogle();
+  Future<Either<AuthFailure, Unit>> signInWithGoogle();
 }
-/*1.2 
-  그렇다면 어떻게 Exception을 catch하고 failures로서 반환할까? 이는 infrastructure에서
-  처리하게 된다.
-*/
