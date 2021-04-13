@@ -26,6 +26,70 @@ class SignInFormBloc extends Bloc<SignInFormEvent, SignInFormState> {
   Stream<SignInFormState> mapEventToState(
     SignInFormEvent event,
   ) async* {
-    // TODO: implement mapEventToState
+    //yield<- 누구세요?
+    yield* event.map(
+        emailChanged: (e) async* {
+          yield state.copyWith(
+            emailAddress: EmailAddress(e.emailStr),
+            authFailureOrSuccess: null,
+          );
+        },
+        passwordChanged: (e) async* {
+          yield state.copyWith(
+            password: Password(e.passwordStr),
+            authFailureOrSuccess: null,
+          );
+        },
+        registerWithEmailAndPasswordPressed: (e) async* {
+          yield* this._performActionOnAuthFacadeWithEmailAndPassword(
+            _authFacade.registerWithEmailAndPassword,
+          );
+        },
+        signInWithEmailAndPasswordPressed: (e) async* {
+          yield* this._performActionOnAuthFacadeWithEmailAndPassword(
+            _authFacade.signInWithEmailAndPassword,
+          );
+        },
+        signInWithGooglePressed: (e) async* {
+          yield state.copyWith(
+            isSubmitting: true,
+            authFailureOrSuccess: null,
+          );
+          final result = await this._authFacade.signInWithGoogle();
+          yield state.copyWith(
+            isSubmitting: true,
+            authFailureOrSuccess: result,
+          );
+        }
+    );
+  }
+  Stream<SignInFormState> _performActionOnAuthFacadeWithEmailAndPassword(
+     Future<Either<AuthFailure, Unit>> Function(
+      EmailAddress emailAddress,
+      Password password,
+    )
+        forwardedCall,
+  ) async* {
+    Either<AuthFailure, Unit>? result;
+
+    final isEmailValid = state.emailAddress.isValid();
+    final isPasswordValid = state.password.isValid();
+
+    if (isEmailValid && isPasswordValid) {
+      yield state.copyWith(
+        isSubmitting: true,
+        authFailureOrSuccess: null,
+      );
+      result = await forwardedCall(
+        state.emailAddress,
+        state.password,
+      );
+    }
+
+    yield state.copyWith(
+      isSubmitting: false,
+      showErrorMessages: true,
+      authFailureOrSuccess: result,
+    );
   }
 }
