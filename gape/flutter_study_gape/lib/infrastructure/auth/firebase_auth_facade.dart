@@ -11,7 +11,9 @@ import 'package:flutter_study_gape/domain/auth/auth_failure.dart';
 import 'package:flutter_study_gape/domain/core/errors.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_study_gape/domain/auth/i_auth_facade.dart';
+import 'package:injectable/injectable.dart';
 
+@lazySingleton
 class FacadeAuthFirebase implements IAuthFacade {
 //class 는 class 자신의 모든 멤버를 포함하는 interface 를 정의하게 된다.
 //implements 를 사용해 다른 class 의 interface 가 사용하는 API 를 사용할 수 있다.
@@ -66,21 +68,20 @@ class FacadeAuthFirebase implements IAuthFacade {
         return left(const AuthFailure.serverError());
       }
     }
-  }
-
+  } 
   @override
   Future<Either<AuthFailure, Unit>> signInWithGoogle() async {
     try {
       final googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
-        return left(AuthFailure.cancelledByUser());
+        return left(const AuthFailure.cancelledByUser());
       }
       final googleAuthentication = await googleUser.authentication;
 
       final AuthCredential = GoogleAuthProvider.credential(
           idToken: googleAuthentication.idToken,
           accessToken: googleAuthentication.accessToken);
-      return _firebaseAuth
+      return _firebaseAuth 
           .signInWithCredential(AuthCredential)
           .then((r) => right(unit));
     } on PlatformException catch (_) {
