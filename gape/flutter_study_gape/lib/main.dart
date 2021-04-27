@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_study_gape/presentation/injection.dart';
+import 'package:injectable/injectable.dart';
 
 void main() {
+  confiqureUnjection(Environment.prod);
   runApp(MyApp());
 }
 
