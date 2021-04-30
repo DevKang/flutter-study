@@ -20,12 +20,13 @@ version: 1.0.0+1
 environment:
   sdk: ">=2.12.0 <3.0.0"
 dependencies:
+  another_flushbar: ^1.10.14
   flutter:
     sdk: flutter
   dartz: ^0.10.0-nullsafety.1
   freezed_annotation: ^0.14.0
-  firebase_core: ^1.0.3
-  firebase_auth: ^1.0.2
+  firebase_core: ^1.1.0
+  firebase_auth: ^1.1.2
   google_sign_in: ^5.0.1
   bloc: ^7.0.0
   flutter_bloc: ^7.0.0
